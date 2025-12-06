@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>RinaORC - Base de comptes</title>
 <script>
-// MOT DE PASSE (change ici quand tu veux)
+// MOT DE PASSE (change cette ligne quand tu veux)
 const PASSWORD = "grinta2025";
 
 if (localStorage.getItem("rinaorc_access") !== "true") {
@@ -18,25 +18,26 @@ if (localStorage.getItem("rinaorc_access") !== "true") {
 </script>
 <style>
     body{font-family:Segoe UI,sans-serif;background:#0c0c0c;color:#f0f0f0;margin:0;padding:20px;line-height:1.6}
-    h1{text-align:center;color:#ffcc00}
+    h1{text-align:center;color:#ffcc00;margin-bottom:10px}
     .subtitle{text-align:center;color:#888;margin-bottom:30px}
-    input{width:100%;max-width:600px;display:block;margin:0 auto 30px;padding:15px;font-size:18px;border:2px solid #333;border-radius:10px;background:#111;color:white}
+    input{width:100%;max-width:600px;display:block;margin:0 auto 30px;padding:15px;font-size:18px;border:2px solid #333;border-radius:10px;background:#111;color:white;box-sizing:border-box}
     input:focus{border-color:#ffcc00;outline:none}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:20px;max-width:1400px;margin:auto}
     .card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:20px;transition:.2s}
     .card:hover{transform:translateY(-5px);box-shadow:0 10px 20px rgba(255,204,0,.1)}
     .pseudo{font-size:1.5em;font-weight:bold;color:#ffcc00;margin-bottom:10px}
-    .info{margin:8px 0}
+    .info{margin:8px 0;font-size:1.1em}
     .clan{color:#00ff9d}
     .discord{color:#7289da}
-    .comptes{margin-top:15px;font-family:monospace;background:#111;padding:12px;border-radius:8px;border-left:4px solid #ffcc00}
+    .comptes{margin-top:15px;font-family:monospace;background:#111;padding:12px;border-radius:8px;border-left:4px solid #ffcc00;font-size:0.95em}
+    .compte-line{margin:6px 0}
     a{color:#ffcc00;text-decoration:none}
     a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <h1>RinaORC - Base de comptes</h1>
-<p class="subtitle">Mis à jour le 06/12/2025 à 14:41 — 172 joueurs</p>
+<p class="subtitle">Mis à jour le 06/12/2025 à 14:46 — 172 joueurs</p>
 <input type="text" id="search" placeholder="Rechercher pseudo, clan, compte...">
 <div class="grid" id="grid"></div>
 <script>
@@ -51,28 +52,34 @@ function render(filter = "") {
         !q || 
         i.pseudo.toLowerCase().includes(q) || 
         i.clan.toLowerCase().includes(q) || 
+        i.discord.includes(q) ||
         i.comptes.some(c => c.pseudo.toLowerCase().includes(q))
     );
     if (!res.length) {
         grid.innerHTML = "<p style='grid-column:1/-1;text-align:center;color:#888'>Aucun résultat</p>";
         return;
     }
+    let htmlContent = "";
     res.forEach(i => {
-        const comptesHtml = i.comptes.map(c => 
-            c.uuid 
-                ? `<div><strong>${esc(c.pseudo)}</strong> → <a href="${c.laby_link}" target="_blank">${c.uuid}</a></div>`
-                : `<div>${esc(c.pseudo)}</div>`
-        ).join("");
-        grid.innerHTML += `
+        let comptesHtml = "";
+        i.comptes.forEach(c => {
+            if (c.uuid) {
+                comptesHtml += `<div class="compte-line"><strong>${esc(c.pseudo)}</strong> → <a href="${c.laby_link}" target="_blank">${esc(c.uuid)}</a></div>`;
+            } else {
+                comptesHtml += `<div class="compte-line">${esc(c.pseudo)}</div>`;
+            }
+        });
+        htmlContent += `
             <div class="card">
                 <div class="pseudo">${esc(i.pseudo)}</div>
                 <div class="info"><span class="clan">Clan :</span> ${esc(i.clan)}</div>
-                <div class="info"><span class="discord">Discord :</span> ${i.discord !== "Non lié" ? `<a href="${i.discord_link}" target="_blank">${i.discord}</a>` : "Non lié"}</div>
+                <div class="info"><span class="discord">Discord :</span> ${i.discord !== "Non lié" ? `<a href="${i.discord_link}" target="_blank">${esc(i.discord)}</a>` : "Non lié"}</div>
                 <div class="comptes">${comptesHtml || "<em>Aucun compte</em>"}</div>
             </div>`;
     });
+    grid.innerHTML = htmlContent;
 }
-document.getElementById("search").addEventListener("input", e => render(e.target.value.toLowerCase()));
+document.getElementById("search").addEventListener("input", e => render(e.target.value));
 render();
 </script>
 </body>
