@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>RinaORC</title>
 <script>
-// CHANGE LE HASH ICI (génère ici : https://emn178.github.io/online-tools/sha256.html)
+// CHANGE LE HASH ICI[](https://emn178.github.io/online-tools/sha256.html)
 const CORRECT_HASH = "d404559f602eab6fd602ac7680dac44a6c1290a0a7e9483d3e6f8d9e0f1a2b3c"; // grinta2025
 
 async function sha256(text) {
@@ -16,7 +16,7 @@ async function sha256(text) {
 let attempts = 0;
 async function ask() {
     if (attempts >= 3) {
-        document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:40vh">Accès refusé</h1>';
+        document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:40vh">Trop de tentatives</h1>';
         return;
     }
     const pass = prompt("Mot de passe requis :");
@@ -47,7 +47,7 @@ async function ask() {
 </head>
 <body>
 <h1>RinaORC - Base de comptes</h1>
-<p style="text-align:center;color:#888">Mis à jour le 07/12/2025 à 12:01 — 172 joueurs</p>
+<p style="text-align:center;color:#888">Mis à jour le 07/12/2025 à 12:02 — 172 joueurs</p>
 <input type="text" id="s" placeholder="Rechercher...">
 <div class="grid" id="grid"></div>
 <script>
