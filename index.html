@@ -5,22 +5,17 @@
 <title>RinaORC - Base de comptes</title>
 
 <script>
-// CHANGE LE HASH ICI QUAND TU VEUX CHANGER LE MOT DE PASSE
-const HASH = "d404559f602eab6fd602ac7680dac44a6c1290a0a7e9483d3e6f8d9e0f1a2b3c"; // "grinta2025" pour l'instant
+// CHANGE LE MOT DE PASSE ICI
+const PASSWORD = "grinta2025";
 
-async function sha256(str) {
-    const data = new TextEncoder().encode(str);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-(async () => {
-    let pass = prompt("Mot de passe requis pour accéder à la base RinaORC :");
-    if (!pass || await sha256(pass.trim()) !== HASH) {
-        document.write("<h1 style='color:red;text-align:center;margin-top:20%'>Accès refusé</h1>");
-        throw "stop";
+if (localStorage.getItem("rinaorc_access") !== "true") {
+    const input = prompt("Mot de passe requis pour accéder à la base RinaORC :");
+    if (input !== PASSWORD) {
+        document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px'>Accès refusé</h1>";
+        throw "Accès refusé";
     }
-})();
+    localStorage.setItem("rinaorc_access", "true");
+}
 </script>
 
 <style>
@@ -44,7 +39,7 @@ async function sha256(str) {
 </head>
 <body>
 <h1>RinaORC - Base de comptes</h1>
-<p class="subtitle">Mis à jour le 07/12/2025 à 11:41 — 172 joueurs</p>
+<p class="subtitle">Mis à jour le 07/12/2025 à 11:43 — 172 joueurs</p>
 <input type="text" id="search" placeholder="Rechercher pseudo, clan, compte...">
 <div class="grid" id="grid"></div>
 
