@@ -26,7 +26,7 @@
 </head>
 <body>
 <h1>RinaORC - Base de comptes</h1>
-<p class="subtitle">Mis à jour le 08/12/2025 à 13:36 — 172 joueurs</p>
+<p class="subtitle">Mis à jour le 08/12/2025 à 13:38 — 172 joueurs</p>
 <input type="text" id="search" placeholder="Rechercher par pseudo ou UUID (API Mojang en live)" autofocus>
 <div class="grid" id="grid"></div>
 
@@ -39,7 +39,9 @@ async function getUUIDFromName(name) {
         const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${name}`);
         if (!res.ok) return null;
         const json = await res.json();
-        return json.id ? `${json.id.slice(0,8)}-${json.id.slice(8,12)}-${json.id.slice(12,16)}-${json.id.slice(16,20)}-${json.id.slice(20)}` : null;
+        if (!json.id) return null;
+        const raw = json.id;
+        return `${raw.slice(0,8)}-${raw.slice(8,12)}-${raw.slice(12,16)}-${raw.slice(16,20)}-${raw.slice(20)}`;
     } catch(e) { return null; }
 }
 
@@ -55,24 +57,25 @@ async function render() {
 
     let found = null;
 
-    // 1. Si c'est un UUID valide → recherche directe
+    // 1. Si c'est un UUID valide → recherche directe (avec tirets)
+    let searchUUID = q;
     if (uuidRegex.test(q)) {
-        const cleanUUID = q.replace(/-/g, "").toLowerCase();
+        searchUUID = q.toLowerCase();
         for (const player of data) {
-            if (player.comptes.some(acc => acc.uuid && acc.uuid.replace(/-/g, "").toLowerCase() === cleanUUID)) {
+            if (player.comptes.some(acc => acc.uuid && acc.uuid.toLowerCase() === searchUUID)) {
                 found = player;
                 break;
             }
         }
     }
 
-    // 2. Sinon → on va chercher l'UUID via Mojang
+    // 2. Sinon → on va chercher l'UUID via Mojang et on cherche avec tirets
     if (!found) {
         const uuid = await getUUIDFromName(q);
         if (uuid) {
-            const clean = uuid.replace(/-/g, "").toLowerCase();
+            const searchUUID = uuid.toLowerCase();
             for (const player of data) {
-                if (player.comptes.some(acc => acc.uuid && acc.uuid.replace(/-/g, "").toLowerCase() === clean)) {
+                if (player.comptes.some(acc => acc.uuid && acc.uuid.toLowerCase() === searchUUID)) {
                     found = player;
                     break;
                 }
@@ -98,7 +101,7 @@ async function render() {
     let comptesHtml = "";
     found.comptes.forEach(c => {
         if (c.uuid) {
-            comptesHtml += `<div class="compte-line"><strong>${escapeHtml(c.pseudo)}</strong> → <a href="${c.laby_link}" target="_blank">${escapeHtml(c.uuid)}</a></div>`;
+            comptesHtml += `<div class="compte-line"><strong>${escapeHtml(c.pseudo)}</strong> → <a href="${c.laby_link}" target="_blank">${c.uuid}</a></div>`;
         } else {
             comptesHtml += `<div class="compte-line">${escapeHtml(c.pseudo)}</div>`;
         }
