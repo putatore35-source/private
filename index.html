@@ -26,7 +26,7 @@
 </head>
 <body>
 <h1>RinaORC - Base de comptes</h1>
-<p class="subtitle">Mis à jour le 08/12/2025 à 13:29 — 172 joueurs</p>
+<p class="subtitle">Mis à jour le 08/12/2025 à 13:36 — 172 joueurs</p>
 <input type="text" id="search" placeholder="Rechercher par pseudo ou UUID (API Mojang en live)" autofocus>
 <div class="grid" id="grid"></div>
 
@@ -98,7 +98,7 @@ async function render() {
     let comptesHtml = "";
     found.comptes.forEach(c => {
         if (c.uuid) {
-            comptesHtml += `<div class="compte-line"><strong>${escapeHtml(c.pseudo)}</strong> → <a href="${c.laby_link}" target="_blank">${c.uuid}</a></div>`;
+            comptesHtml += `<div class="compte-line"><strong>${escapeHtml(c.pseudo)}</strong> → <a href="${c.laby_link}" target="_blank">${escapeHtml(c.uuid)}</a></div>`;
         } else {
             comptesHtml += `<div class="compte-line">${escapeHtml(c.pseudo)}</div>`;
         }
